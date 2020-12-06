@@ -5,6 +5,8 @@
 #include <fstream>
 #include <string>
 
+#define ADDER_COUNT 3
+
 #define FILE_IN
 #ifdef RAND_IN
   #undef FILE_IN
@@ -18,7 +20,7 @@
   #endif
 #endif //RAND_IN
 
-int find2020(const std::vector<unsigned int>& inList);
+int find_product(const std::vector<unsigned int>& inList, unsigned int query_num, unsigned int num_quant);
 
 int main(){
 
@@ -30,6 +32,7 @@ int main(){
     for (std::string line; std::getline(input, line); ) {
         inList.push_back(std::stoi(line));
     }
+    input.close();
 #endif //RAND_IN
 
 #ifdef RAND_IN
@@ -43,35 +46,44 @@ int main(){
     }
 #endif //RAND_IN
 
-    int result = find2020(inList);
-    std::cout << "Result: " << result << std::endl;
+    unsigned int result = (unsigned int)find_product(inList, 2020, ADDER_COUNT);
+    std::cout << std::endl << "Result: " << result << std::endl;
     return (0);
 }
 
 
-int find2020(const std::vector<unsigned int>& List){
-    int result = -1;
-    unsigned int query_num = 2020;
+int find_product(const std::vector<unsigned int>& List, unsigned int query_num, unsigned int num_quant){
+    long int result = -1;
     std::set<unsigned int> needed;
 
+    if (num_quant == 1){
+        std::cerr << "Cannot find product with one input" << std::endl;
+        std::exit(1);
+    }
+        
     for (std::vector<unsigned int>::const_iterator i = List.begin(); i != List.end(); ++i) {
         if (*i >= query_num){
             continue;
         }
-        if (needed.find(*i) == needed.end()){
+        
+        if (num_quant > 2) {
+            int sub_prod = find_product(List, (query_num-*i), num_quant-1); 
+    
+            if (sub_prod == -1){
+                needed.insert(query_num - *i);
+                continue; 
+            }
+            
+            //std::cout << " + " << *i;
+            result = (sub_prod * *i);
+            break;
+        } else if (needed.find(*i) == needed.end()){
             needed.insert(query_num - *i);
         } else { 
-            std::cout << "Found: " << *i << "+" << query_num - *i << std::endl;
+            //std::cout << " " << *i << " + " << query_num - *i;
             result = *i * (query_num - *i);
             break;
         }
     }
-    
-
-    if (result == -1){
-        std::cerr << "No Numbers add to 2020" << std::endl;
-        std::exit(1);
-    }
-
     return result;
 }
