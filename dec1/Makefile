@@ -12,5 +12,8 @@ all: exec
 exec: main.cpp
 	$(CXX) $(LDFLAGS) -o exec main.cpp
 
+run: exec
+	./exec
+
 clean:
 	rm exec

@@ -1,34 +1,55 @@
 #include <iostream>
 #include <stdlib.h>
 #include <vector>
+#include <set>
 
-#define LIST_ENTRIES 1000
-#define RSEED 12
+#ifndef LIST_ENTRIES 
+  #define LIST_ENTRIES 10000000
+#endif
 
-int find2020(std::vector<int> inList);
+#ifndef RSEED
+  #define RSEED 16
+#endif
+
+int find2020(const std::vector<unsigned int>& inList);
 
 int main(){
     srand(RSEED);
 
-    std::vector<int> inList;
+    std::vector<unsigned int> inList;
     int list_entries = LIST_ENTRIES;
 
     inList.reserve(list_entries);
 
     for (int i(0); i < list_entries; ++i){
-        inList[i] = rand() % 2021;
+        inList.push_back(rand() % 2020);
     }
-
-    std::cout << "Result: " << find2020(inList) << std::endl;
+    int result = find2020(inList);
+    std::cout << "Result: " << result << std::endl;
     return (0);
 }
 
 
-int find2020(std::vector<int> List){
+int find2020(const std::vector<unsigned int>& List){
     int result = -1;
+    unsigned int query_num = 2020;
+    std::set<unsigned int> needed;
 
+    for (std::vector<unsigned int>::const_iterator i = List.begin(); i != List.end(); ++i) {
+        if (*i >= query_num){
+            continue;
+        }
+        if (needed.find(*i) == needed.end()){
+            needed.insert(query_num - *i);
+        } else { 
+            std::cout << "Found: " << *i << "+" << query_num - *i << std::endl;
+            result = *i * (query_num - *i);
+            break;
+        }
+    }
+    
 
-    if (result = -1){
+    if (result == -1){
         std::cerr << "No Numbers add to 2020" << std::endl;
         std::exit(1);
     }
