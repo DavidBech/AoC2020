@@ -2,21 +2,38 @@
 #include <stdlib.h>
 #include <vector>
 #include <set>
+#include <fstream>
+#include <string>
 
-#ifndef LIST_ENTRIES 
-  #define LIST_ENTRIES 10000000
-#endif
+#define FILE_IN
+#ifdef RAND_IN
+  #undef FILE_IN
 
-#ifndef RSEED
-  #define RSEED 16
-#endif
+  #ifndef LIST_ENTRIES 
+    #define LIST_ENTRIES 10000000
+  #endif
+  
+  #ifndef RSEED
+    #define RSEED 16
+  #endif
+#endif //RAND_IN
 
 int find2020(const std::vector<unsigned int>& inList);
 
 int main(){
-    srand(RSEED);
 
     std::vector<unsigned int> inList;
+
+#ifdef FILE_IN
+    std::ifstream input;
+    input.open("inputDec1");
+    for (std::string line; std::getline(input, line); ) {
+        inList.push_back(std::stoi(line));
+    }
+#endif //RAND_IN
+
+#ifdef RAND_IN
+    srand(RSEED);
     int list_entries = LIST_ENTRIES;
 
     inList.reserve(list_entries);
@@ -24,6 +41,8 @@ int main(){
     for (int i(0); i < list_entries; ++i){
         inList.push_back(rand() % 2020);
     }
+#endif //RAND_IN
+
     int result = find2020(inList);
     std::cout << "Result: " << result << std::endl;
     return (0);
