@@ -20,10 +20,6 @@ int main(){
         if (password_valid(line)) {
             ++valid_counter;
         }
-
-        //if  (++total_counter == 10) {
-        //   std::exit(0);
-        //}
         ++total_counter;
     }
     input.close();
@@ -75,25 +71,9 @@ bool password_valid(std::string fileLine){
         }
     }
     //std::cout << std::endl;
-    
     required = split[1].at(0); 
     pass = split[2]; 
-   
-    int req_cnt = 0; 
-    for (int i(0); i < pass.length(); ++i){
-        if (pass.at(i) == required) {
-            ++req_cnt; 
-        }
-    }
-    valid = req_cnt >= min && req_cnt <= max ? true : false;
-    
-    std::cout << fileLine << std::endl;
-    //std::cout << std::endl;
-    std::cout << "min: " << min << std::endl;
-    std::cout << "max: " << max << std::endl;
-    std::cout << "required: " << required << std::endl;
-    std::cout << "valid: " << (valid ? "true" : "false") << std::endl;
-    std::cout << "pass: " << pass << std::endl;
-    std::cout << std::endl;
+
+    valid = pass.at(min-1) == required ^ pass.at(max-1) == required;
     return valid;
 }
