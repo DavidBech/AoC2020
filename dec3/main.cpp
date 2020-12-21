@@ -9,13 +9,14 @@
 #include <iomanip>
 std::uint32_t get_hill(std::string fileLine);
 void print_hill_line(std::vector<std::uint32_t>& hill, int line);
+unsigned int find_trees(const std::vector<std::uint32_t>& hill, int slope[2]);
+
 
 int main(){
     std::ifstream input;//input file
     std::vector<std::uint32_t> hill; //hill
-    int tree_quant = 0;//trees hit
-    int slope[2] = {3, 1}; //right, down
-    int pos = 0; //right%31, down
+
+    unsigned long int result = 1;
 
     input.open("inputdec3.txt");
 
@@ -25,17 +26,22 @@ int main(){
         ++line_cntr;
     }
     input.close();
+    
+    int slope[2] = {3, 1};
+    result *= find_trees(hill, slope);
+    slope[0] = 1; 
+    result *= find_trees(hill, slope);
+    slope[0] = 5; 
+    result *= find_trees(hill, slope);
+    slope[0] = 7; 
+    result *= find_trees(hill, slope);
+    slope[0] = 1; 
+    slope[1] = 2; 
+    result *= find_trees(hill, slope);
 
 
-    for (int i(0); i <= line_cntr; ++i){
-        if (hill[i] & (1 << (pos+1))) {
-            ++tree_quant; 
-        }
-        pos += 3;
-        pos %= 31;
-    }
 
-    std::cout << "Trees Hit: " << tree_quant << std::endl; 
+    std::cout << "Trees Hit Multi Together: " << result << std::endl; 
     return (0);
 }
 
@@ -50,11 +56,27 @@ std::uint32_t get_hill(std::string line){
     return temp;
 }
 
-void print_hill_line(std::vector<std::uint32_t>& hill, int line) {
+void print_hill_line(const std::vector<std::uint32_t>& hill, int line) {
     bool temp;
     for (int i(1); i < 32; ++i){
         temp = hill[line] & (1 << i);
         std::cout << temp;
     }
     return;
+}
+
+unsigned int find_trees(const std::vector<std::uint32_t>& hill, int slope[2]) {
+    int y = 0; 
+    unsigned int tree_quant = 0;
+
+    for (int i(0); i <= hill.size(); i+=slope[1]){
+
+        if (hill[i] & (1 << (y+1))) {
+            ++tree_quant; 
+        }
+        y += slope[0];
+        y %= 31;
+        
+    }
+    return tree_quant;
 }
